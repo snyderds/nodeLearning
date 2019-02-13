@@ -1,12 +1,14 @@
 const http = require('http');
 const fs = require('fs');
 
+
+
 function rqListener(req, res) {
     //console.log(req.url, req.method, req.headers);
     const url = req.url;
     const method = req.method;
 
-
+    
     if (url === '/'){
         res.write('<html>');
         res.write('<head><title>Enter Message</title></head>');
@@ -16,6 +18,18 @@ function rqListener(req, res) {
     }
 
     if (url === '/message' && method === 'POST'){
+        const body = [];
+
+        req.on('data', (chunk) => {
+            console.log(chunk);
+            body.push(chunk);
+        });
+
+        req.on('end', () => {
+            const parsedBody = Buffer.concat(body).toString();
+            console.log(parsedBody);
+
+        });
         fs.writeFileSync('message.txt', 'DUMMY');
         res.statusCode = 302;
         res.setHeader('Location', '/');
